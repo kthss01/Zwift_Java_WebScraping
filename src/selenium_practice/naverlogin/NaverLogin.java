@@ -6,6 +6,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import java.io.File;
+
 public class NaverLogin {
 
     private final WebDriver driver;
@@ -14,7 +16,8 @@ public class NaverLogin {
 
     // 1. 드라이버 설치 경로
     public final static String WEB_DRIVER_ID = "webdriver.chrome.driver";
-    public final static String WEB_DRIVER_PATH = "C:/Users/Kay/IdeaProjects/Zwift_Java_WebScraping/webdriver/chromedriver.exe";
+    private final static String PATH = new File("").getAbsolutePath();
+    public final static String WEB_DRIVER_PATH = PATH + "/webdriver/chromedriver.exe";
     
     public NaverLogin() {
         // WebDriver 경로 설정
