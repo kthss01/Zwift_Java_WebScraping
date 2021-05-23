@@ -6,6 +6,8 @@ import com.kay.model.vo.ActivityWalk;
 import com.kay.model.vo.Profile;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Action;
+import org.openqa.selenium.interactions.Actions;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -50,15 +52,15 @@ public class SeleniumScraper {
 
             zwiftFindAllActivity();
 
-//            scrapingProfile();
+            scrapingProfile();
+
             scrapingActivities();
 
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
-//            driver.close();
+            driver.close();
         }
-
     }
 
     private void scrapingActivities() throws InterruptedException {
@@ -66,7 +68,7 @@ public class SeleniumScraper {
 
         List<WebElement> elements = driver.findElements(By.cssSelector("#app-root > div > div.wrapper.wrapper--main.d-flex.p-0.pr-md-2_5.pl-md-2_5.mx-auto > div.column.column--left.flex-grow-1 > div:nth-child(2) > ul > li"));
 
-//        System.out.println(elements.size());
+//        System.out.println("Activities Size : " + elements.size());
 
         WebElement temp;
 
@@ -106,11 +108,12 @@ public class SeleniumScraper {
             } else {
                 activities.add(new ActivityWalk(image, date, rideon, name, distance, time, calories, subStat));
             }
-            System.out.println(activities.get(activities.size() - 1));
+//            System.out.println(activities.get(activities.size() - 1));
 
-            Thread.sleep(1000);
+//            Thread.sleep(1000);
         }
 
+        System.out.println("All Activities Scraped");
     }
 
     private void scrapingProfile() {
@@ -164,7 +167,8 @@ public class SeleniumScraper {
 
         profile = new Profile(icon, name, rideLevel, rideLevelExp, rideDistance, rideTime, rideElevation, rideCalories, walkLevel, walkLevelExp, walkDistance, walkTime, walkCalories, drops);
 
-        System.out.println(profile);
+//        System.out.println(profile);
+        System.out.println("Profile Scarped");
     }
 
     private void zwiftFindAllActivity() throws InterruptedException {
@@ -173,27 +177,21 @@ public class SeleniumScraper {
 
         element = driver.findElement(By.cssSelector("#app-root > div > div.wrapper.wrapper--main.d-flex.p-0.pr-md-2_5.pl-md-2_5.mx-auto > div.column.column--left.flex-grow-1 > div:nth-child(2) > div > div"));
 
-        boolean isAllFind = false;
+        Actions action = new Actions(driver);
 
-        // LOAD MORE ACTIVITIES 버튼을 클릭하여 모든 Activity 보기 (반복)
-        do {
-            js.executeScript("window.scrollTo(0, document.body.scrollHeight);");
-            // 부드럽게 이동
-//            js.executeScript("window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });");
+        while (true) {
+            for (int i = 0; i < 20; i++) {
+                action.sendKeys(Keys.SPACE).perform(); // 스페이스 키 누르면 브라우저에서는 스크롤이 내려감
+                Thread.sleep(300);
+            }
 
             try {
                 element.click();
             } catch (WebDriverException e) {
-                System.out.println("All Activity Found");
-                isAllFind = true;
+                System.out.println("All Activities Found");
+                break;
             }
-
-            Thread.sleep(1000);
-        } while (!isAllFind);
-
-        // 이거 안먹힘
-        js.executeScript("window.scrollTo({ top: 0, behavior: 'smooth' });"); // 부드럽게 위로 올라오기
-        Thread.sleep(1000);
+        }
     }
 
     private void zwiftLogin() throws InterruptedException {
@@ -233,15 +231,15 @@ public class SeleniumScraper {
         element = driver.findElement(By.cssSelector("#app-root > div > div.wrapper.wrapper--main.d-flex.p-0.pr-md-2_5.pl-md-2_5.mx-auto > div.column.column--left.flex-grow-1 > div.section.section--header.d-flex.flex-column.flex-lg-row.justify-content-lg-between.pt-2_5.pr-2_5.pl-2_5.p-md-0.p-lg-0.mb-3 > ul > li:nth-child(3)"));
         element.click();
         Thread.sleep(1000);
+
+        System.out.println("Login Completed");
     }
 
     private String inputPassword() {
         Scanner sc = new Scanner(System.in);
 
-        String password = "";
-
         System.out.print("비밀번호 입력 : ");
-        password = sc.nextLine();
+        String password = sc.nextLine();
 
         return password;
     }
