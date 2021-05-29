@@ -1,7 +1,5 @@
 package com.kay.model.vo;
 
-import java.time.LocalTime;
-
 public class Profile {
     private String icon; // icon url
     private String name;
@@ -13,15 +11,15 @@ public class Profile {
     private String rideElevation;
     private String rideCalories;
 
-    private String walkLevel;
-    private String walkLevelExp;
-    private String walkDistance;
-    private String walkTime;
-    private String walkCalories;
+    private String runLevel;
+    private String runLevelExp;
+    private String runDistance;
+    private String runTime;
+    private String runCalories;
 
     private String drops;
 
-    public Profile(String icon, String name, String rideLevel, String rideLevelExp, String rideDistance, String rideTime, String rideElevation, String rideCalories, String walkLevel, String walkLevelExp, String walkDistance, String walkTime, String walkCalories, String drops) {
+    public Profile(String icon, String name, String rideLevel, String rideLevelExp, String rideDistance, String rideTime, String rideElevation, String rideCalories, String runLevel, String runLevelExp, String runDistance, String runTime, String runCalories, String drops) {
         this.icon = icon;
         this.name = name;
         this.rideLevel = rideLevel;
@@ -30,11 +28,11 @@ public class Profile {
         this.rideTime = rideTime;
         this.rideElevation = rideElevation;
         this.rideCalories = rideCalories;
-        this.walkLevel = walkLevel;
-        this.walkLevelExp = walkLevelExp;
-        this.walkDistance = walkDistance;
-        this.walkTime = walkTime;
-        this.walkCalories = walkCalories;
+        this.runLevel = runLevel;
+        this.runLevelExp = runLevelExp;
+        this.runDistance = runDistance;
+        this.runTime = runTime;
+        this.runCalories = runCalories;
         this.drops = drops;
     }
 
@@ -49,11 +47,11 @@ public class Profile {
                 "\n rideTime='" + rideTime + '\'' +
                 "\n rideElevation='" + rideElevation + '\'' +
                 "\n rideCalories='" + rideCalories + '\'' +
-                "\n walkLevel='" + walkLevel + '\'' +
-                "\n walkLevelExp='" + walkLevelExp + '\'' +
-                "\n walkDistance='" + walkDistance + '\'' +
-                "\n walkTime='" + walkTime + '\'' +
-                "\n walkCalories='" + walkCalories + '\'' +
+                "\n runLevel='" + runLevel + '\'' +
+                "\n runLevelExp='" + runLevelExp + '\'' +
+                "\n runDistance='" + runDistance + '\'' +
+                "\n runTime='" + runTime + '\'' +
+                "\n runCalories='" + runCalories + '\'' +
                 "\n drops='" + drops + '\'' +
                 "\n}";
     }
@@ -122,44 +120,44 @@ public class Profile {
         this.rideCalories = rideCalories;
     }
 
-    public String getWalkLevel() {
-        return walkLevel;
+    public String getRunLevel() {
+        return runLevel;
     }
 
-    public void setWalkLevel(String walkLevel) {
-        this.walkLevel = walkLevel;
+    public void setRunLevel(String runLevel) {
+        this.runLevel = runLevel;
     }
 
-    public String getWalkLevelExp() {
-        return walkLevelExp;
+    public String getRunLevelExp() {
+        return runLevelExp;
     }
 
-    public void setWalkLevelExp(String walkLevelExp) {
-        this.walkLevelExp = walkLevelExp;
+    public void setRunLevelExp(String runLevelExp) {
+        this.runLevelExp = runLevelExp;
     }
 
-    public String getWalkDistance() {
-        return walkDistance;
+    public String getRunDistance() {
+        return runDistance;
     }
 
-    public void setWalkDistance(String walkDistance) {
-        this.walkDistance = walkDistance;
+    public void setRunDistance(String runDistance) {
+        this.runDistance = runDistance;
     }
 
-    public String getWalkTime() {
-        return walkTime;
+    public String getRunTime() {
+        return runTime;
     }
 
-    public void setWalkTime(String walkTime) {
-        this.walkTime = walkTime;
+    public void setRunTime(String runTime) {
+        this.runTime = runTime;
     }
 
-    public String getWalkCalories() {
-        return walkCalories;
+    public String getRunCalories() {
+        return runCalories;
     }
 
-    public void setWalkCalories(String walkCalories) {
-        this.walkCalories = walkCalories;
+    public void setRunCalories(String runCalories) {
+        this.runCalories = runCalories;
     }
 
     public String getDrops() {

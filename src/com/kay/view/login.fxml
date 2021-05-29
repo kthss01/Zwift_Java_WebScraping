@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="450.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kay.controller.LoginViewController">
+   <ImageView fitHeight="450.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true">
+      <Image url="@../../../images/loginbg.png"/>
+   </ImageView>
+   <TextField fx:id="idField" layoutX="299.0" layoutY="50.0" prefHeight="22.0" prefWidth="213.0"
+              text="kthss01@gmail.com"/>
+   <PasswordField fx:id="pwdField" layoutX="299.0" layoutY="88.0" prefHeight="22.0" prefWidth="213.0"/>
+   <ImageView fitHeight="36.0" fitWidth="77.0" layoutX="508.0" layoutY="188.0" onMouseClicked="#loginBtn"
+              pickOnBounds="true" preserveRatio="true"/>
+</AnchorPane>

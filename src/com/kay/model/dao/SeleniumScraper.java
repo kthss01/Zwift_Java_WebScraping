@@ -2,11 +2,10 @@ package com.kay.model.dao;
 
 import com.kay.model.vo.Activity;
 import com.kay.model.vo.ActivityRide;
-import com.kay.model.vo.ActivityWalk;
+import com.kay.model.vo.ActivityRun;
 import com.kay.model.vo.Profile;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
 
 import java.io.File;
@@ -106,7 +105,7 @@ public class SeleniumScraper {
             if (isRide) {
                 activities.add(new ActivityRide(image, date, rideon, name, distance, time, calories, subStat));
             } else {
-                activities.add(new ActivityWalk(image, date, rideon, name, distance, time, calories, subStat));
+                activities.add(new ActivityRun(image, date, rideon, name, distance, time, calories, subStat));
             }
 //            System.out.println(activities.get(activities.size() - 1));
 
@@ -145,27 +144,27 @@ public class SeleniumScraper {
         element = driver.findElement(By.cssSelector("#app-root > div > div.wrapper.wrapper--main.d-flex.p-0.pr-md-2_5.pl-md-2_5.mx-auto > div.column.column--right.column--sidebar.d-none.d-md-flex.flex-column.ml-md-4.ml-lg-5 > div:nth-child(3) > div.zwift__card__item.zwift__card__item--bottom.px-3.mt-4 > ul:nth-child(2) > li:nth-child(4) > div.ml-auto.d-flex > div"));
         String rideCalories = element.getText();
 
-        // walk
+        // run
         element = driver.findElement(By.cssSelector("#app-root > div > div.wrapper.wrapper--main.d-flex.p-0.pr-md-2_5.pl-md-2_5.mx-auto > div.column.column--right.column--sidebar.d-none.d-md-flex.flex-column.ml-md-4.ml-lg-5 > div:nth-child(3) > div.zwift__card__item.zwift__card__item--bottom.px-3.mt-4 > ul.user__sports__progression__list.d-flex.flex-row.mt-5.mb-4 > li > div.d-flex.flex-row.justify-content-between.align-items-center.mb-2 > div.d-flex.align-items-center > h5"));
-        String walkLevel = element.getText();
+        String runLevel = element.getText();
 
         element = driver.findElement(By.cssSelector("#app-root > div > div.wrapper.wrapper--main.d-flex.p-0.pr-md-2_5.pl-md-2_5.mx-auto > div.column.column--right.column--sidebar.d-none.d-md-flex.flex-column.ml-md-4.ml-lg-5 > div:nth-child(3) > div.zwift__card__item.zwift__card__item--bottom.px-3.mt-4 > ul.user__sports__progression__list.d-flex.flex-row.mt-5.mb-4 > li > div.progress.progress > div"));
-        String walkLevelExp = element.getAttribute("aria-valuenow");
+        String runLevelExp = element.getAttribute("aria-valuenow");
 
         element = driver.findElement(By.cssSelector("#app-root > div > div.wrapper.wrapper--main.d-flex.p-0.pr-md-2_5.pl-md-2_5.mx-auto > div.column.column--right.column--sidebar.d-none.d-md-flex.flex-column.ml-md-4.ml-lg-5 > div:nth-child(3) > div.zwift__card__item.zwift__card__item--bottom.px-3.mt-4 > ul:nth-child(4) > li:nth-child(1) > div.ml-auto.d-flex > div"));
-        String walkDistance = element.getText();
+        String runDistance = element.getText();
 
         element = driver.findElement(By.cssSelector("#app-root > div > div.wrapper.wrapper--main.d-flex.p-0.pr-md-2_5.pl-md-2_5.mx-auto > div.column.column--right.column--sidebar.d-none.d-md-flex.flex-column.ml-md-4.ml-lg-5 > div:nth-child(3) > div.zwift__card__item.zwift__card__item--bottom.px-3.mt-4 > ul:nth-child(4) > li:nth-child(2) > div.ml-auto.d-flex"));
-        String walkTime = element.getText().replaceAll("\n", " "); // time의 경우 \n으로 구분되어있어서 처리
+        String runTime = element.getText().replaceAll("\n", " "); // time의 경우 \n으로 구분되어있어서 처리
 
         element = driver.findElement(By.cssSelector("#app-root > div > div.wrapper.wrapper--main.d-flex.p-0.pr-md-2_5.pl-md-2_5.mx-auto > div.column.column--right.column--sidebar.d-none.d-md-flex.flex-column.ml-md-4.ml-lg-5 > div:nth-child(3) > div.zwift__card__item.zwift__card__item--bottom.px-3.mt-4 > ul:nth-child(4) > li:nth-child(3) > div.ml-auto.d-flex > div"));
-        String walkCalories = element.getText();
+        String runCalories = element.getText();
 
         // drops
         element = driver.findElement(By.cssSelector("#app-root > div > div.wrapper.wrapper--main.d-flex.p-0.pr-md-2_5.pl-md-2_5.mx-auto > div.column.column--right.column--sidebar.d-none.d-md-flex.flex-column.ml-md-4.ml-lg-5 > div:nth-child(3) > div.zwift__card__item.zwift__card__item--bottom.background__color--secondary.mt-4.py-4 > ul > li > div.value.font-weight-black"));
         String drops = element.getText();
 
-        profile = new Profile(icon, name, rideLevel, rideLevelExp, rideDistance, rideTime, rideElevation, rideCalories, walkLevel, walkLevelExp, walkDistance, walkTime, walkCalories, drops);
+        profile = new Profile(icon, name, rideLevel, rideLevelExp, rideDistance, rideTime, rideElevation, rideCalories, runLevel, runLevelExp, runDistance, runTime, runCalories, drops);
 
 //        System.out.println(profile);
         System.out.println("Profile Scarped");
