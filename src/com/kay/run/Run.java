@@ -17,9 +17,9 @@ public class Run extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-//            Parent root = FXMLLoader.load(getClass().getResource("../view/main.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("../view/main.fxml"));
             // test
-            Parent root = FXMLLoader.load(getClass().getResource("../view/login.fxml"));
+//            Parent root = FXMLLoader.load(getClass().getResource("../view/login.fxml"));
             Scene scene = new Scene(root);
             primaryStage.setTitle("ZwiftWebScraping");
             primaryStage.setScene(scene);
