@@ -24,7 +24,9 @@ public class SeleniumScraper {
     private String url;
 
     // 개인 정보
-    private final String email = "kthtim0704@gmail.com";
+    private String email = "kthtim0704@gmail.com";
+    private String password = "";
+    private boolean isPwdExist = false;
 
     // 드라이버 설치 경로
     public final static String WEB_DRIVER_ID = "webdriver.chrome.driver";
@@ -38,6 +40,14 @@ public class SeleniumScraper {
 //        driver = new ChromeDriver();
 
         url = "https://www.zwift.com/";
+//        url = "https://www.naver.com/";
+    }
+
+    public SeleniumScraper(String email, String password) {
+        this();
+        this.email = email;
+        this.password = password;
+        isPwdExist = true;
     }
 
     public void zwiftScarping() {
@@ -67,14 +77,14 @@ public class SeleniumScraper {
 
         List<WebElement> elements = driver.findElements(By.cssSelector("#app-root > div > div.wrapper.wrapper--main.d-flex.p-0.pr-md-2_5.pl-md-2_5.mx-auto > div.column.column--left.flex-grow-1 > div:nth-child(2) > ul > li"));
 
-//        System.out.println("Activities Size : " + elements.size());
+        System.out.println("Activities Size : " + elements.size());
 
         WebElement temp;
 
         for (WebElement ele : elements) {
             temp = ele.findElement(By.cssSelector("div > div.zwift__card__item.zwift__card--top > a > div.activity__stats--card.pos__absolute.d-flex.flex-column.w-100.p-2_5.pb-sm-4.px-sm-3.text-white.text-shadow > ul"));
             String[] stats = temp.getText().split("\n");
-            boolean isRide = stats[4].equals("Elevation"); // 3번째 정보로 ride인지 walk인지 구분
+            boolean isRide = stats[4].equals("Elevation"); // 3번째 정보로 ride run 구분
 
             temp = ele.findElement(By.cssSelector("div > div.zwift__card__item.zwift__card--top > a > div.activity__image.pos__relative.overflow__hidden.scrollable__element--hidden.contain--layout > img"));
             String image = temp.getAttribute("style");
@@ -107,7 +117,7 @@ public class SeleniumScraper {
             } else {
                 activities.add(new ActivityRun(image, date, rideon, name, distance, time, calories, subStat));
             }
-//            System.out.println(activities.get(activities.size() - 1));
+            System.out.println(activities.get(activities.size() - 1));
 
 //            Thread.sleep(1000);
         }
@@ -179,9 +189,9 @@ public class SeleniumScraper {
         Actions action = new Actions(driver);
 
         while (true) {
-            for (int i = 0; i < 20; i++) {
+            for (int i = 0; i < 25; i++) {
                 action.sendKeys(Keys.SPACE).perform(); // 스페이스 키 누르면 브라우저에서는 스크롤이 내려감
-                Thread.sleep(300);
+                Thread.sleep(500);
             }
 
             try {
@@ -196,6 +206,10 @@ public class SeleniumScraper {
     private void zwiftLogin() throws InterruptedException {
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         Dimension size = driver.manage().window().getSize();
+
+        // cookie 동의 처리
+        element = driver.findElement(By.cssSelector("#truste-consent-button"));
+        element.click();
 
         // login 버튼이 보이지 않아 화면 확대
         driver.manage().window().setSize(new Dimension(1920, 1024));
@@ -213,7 +227,8 @@ public class SeleniumScraper {
         element.sendKeys(email);
 
         // Password 입력
-        String password = inputPassword();
+        if (!isPwdExist)
+            password = inputPassword();
         element = driver.findElement(By.cssSelector("#password"));
         element.sendKeys(password);
 
@@ -221,10 +236,6 @@ public class SeleniumScraper {
         element = driver.findElement(By.cssSelector("#submit-button"));
         element.click();
         Thread.sleep(1000);
-
-        // cookie 동의 처리
-        element = driver.findElement(By.cssSelector("#truste-consent-button"));
-        element.click();
 
         // JUST ME 클릭 (내 Activity만 보기)
         element = driver.findElement(By.cssSelector("#app-root > div > div.wrapper.wrapper--main.d-flex.p-0.pr-md-2_5.pl-md-2_5.mx-auto > div.column.column--left.flex-grow-1 > div.section.section--header.d-flex.flex-column.flex-lg-row.justify-content-lg-between.pt-2_5.pr-2_5.pl-2_5.p-md-0.p-lg-0.mb-3 > ul > li:nth-child(3)"));
@@ -241,6 +252,14 @@ public class SeleniumScraper {
         String password = sc.nextLine();
 
         return password;
+    }
+
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public ArrayList<Activity> getActivities() {
+        return activities;
     }
 
     public static void main(String[] args) {

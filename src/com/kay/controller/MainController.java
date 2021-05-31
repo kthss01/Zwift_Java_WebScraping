@@ -1,5 +1,6 @@
 package com.kay.controller;
 
+import com.kay.model.dao.SeleniumScraper;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -48,6 +49,8 @@ public class MainController implements Initializable {
     public Label rideCount;
     public Label runCount;
 
+    private SeleniumScraper scraper;
+
     // email과 password 저장
     private Map<String, String> userInfo = new LinkedHashMap<>();
 
@@ -72,5 +75,12 @@ public class MainController implements Initializable {
 
 //        System.out.println("test");
 //        System.out.println(userInfo);
+
+        scraper = new SeleniumScraper(userInfo.get("email"), userInfo.get("password"));
+        scraper.zwiftScarping();
+
+        System.out.println("show profile, activities");
+        System.out.println(scraper.getProfile());
+        System.out.println(scraper.getActivities());
     }
 }
