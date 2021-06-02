@@ -6,8 +6,8 @@ import java.time.LocalTime;
 public class ActivityRun extends Activity {
     private String pace;
 
-    public ActivityRun(String image, String date, String rideon, String name, String distance, String time, String calories, String pace) {
-        super(image, date, rideon, name, distance, time, calories);
+    public ActivityRun(String url, String image, String date, String rideon, String name, String distance, String time, String calories, String pace) {
+        super(url, image, date, rideon, name, distance, time, calories);
         this.pace = pace;
     }
 

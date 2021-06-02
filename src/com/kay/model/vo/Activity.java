@@ -1,9 +1,13 @@
 package com.kay.model.vo;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public abstract class Activity {
+public abstract class Activity implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private String url; // activity 세부 정보 url
     private String image; // 이미지 url
     private String date;
     private String rideon;
@@ -12,7 +16,8 @@ public abstract class Activity {
     private String time;
     private String calories;
 
-    public Activity(String image, String date, String rideon, String name, String distance, String time, String calories) {
+    public Activity(String url, String image, String date, String rideon, String name, String distance, String time, String calories) {
+        this.url = url;
         this.image = image;
         this.date = date;
         this.rideon = rideon;
@@ -20,6 +25,14 @@ public abstract class Activity {
         this.distance = distance;
         this.time = time;
         this.calories = calories;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getImage() {
@@ -49,7 +62,8 @@ public abstract class Activity {
     @Override
     public String toString() {
         return "Activity {\n " +
-                "image='" + image + '\'' +
+                "url='" + url + '\'' +
+                "\n image='" + image + '\'' +
                 "\n date='" + date + '\'' +
                 "\n rideon='" + rideon + '\'' +
                 "\n name='" + name + '\'' +

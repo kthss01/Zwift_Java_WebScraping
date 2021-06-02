@@ -8,7 +8,7 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -41,6 +41,7 @@ public class SeleniumScraper {
 
         url = "https://www.zwift.com/";
 //        url = "https://www.naver.com/";
+        activities = new ArrayList<>();
     }
 
     public SeleniumScraper(String email, String password) {
@@ -73,7 +74,8 @@ public class SeleniumScraper {
     }
 
     private void scrapingActivities() throws InterruptedException {
-        activities = new ArrayList<>();
+        if (!activities.isEmpty())
+            activities.clear();
 
         List<WebElement> elements = driver.findElements(By.cssSelector("#app-root > div > div.wrapper.wrapper--main.d-flex.p-0.pr-md-2_5.pl-md-2_5.mx-auto > div.column.column--left.flex-grow-1 > div:nth-child(2) > ul > li"));
 
@@ -85,6 +87,9 @@ public class SeleniumScraper {
             temp = ele.findElement(By.cssSelector("div > div.zwift__card__item.zwift__card--top > a > div.activity__stats--card.pos__absolute.d-flex.flex-column.w-100.p-2_5.pb-sm-4.px-sm-3.text-white.text-shadow > ul"));
             String[] stats = temp.getText().split("\n");
             boolean isRide = stats[4].equals("Elevation"); // 3번째 정보로 ride run 구분
+
+            temp = ele.findElement(By.cssSelector("div > div.zwift__card__item.zwift__card--top > a"));
+            String url = "https://www.zwift.com/" + temp.getAttribute("href");
 
             temp = ele.findElement(By.cssSelector("div > div.zwift__card__item.zwift__card--top > a > div.activity__image.pos__relative.overflow__hidden.scrollable__element--hidden.contain--layout > img"));
             String image = temp.getAttribute("style");
@@ -113,9 +118,9 @@ public class SeleniumScraper {
             String calories = temp.getText();
 
             if (isRide) {
-                activities.add(new ActivityRide(image, date, rideon, name, distance, time, calories, subStat));
+                activities.add(new ActivityRide(url, image, date, rideon, name, distance, time, calories, subStat));
             } else {
-                activities.add(new ActivityRun(image, date, rideon, name, distance, time, calories, subStat));
+                activities.add(new ActivityRun(url, image, date, rideon, name, distance, time, calories, subStat));
             }
             System.out.println(activities.get(activities.size() - 1));
 
@@ -182,14 +187,14 @@ public class SeleniumScraper {
 
     private void zwiftFindAllActivity() throws InterruptedException {
         // 스크롤을 최대로 내리기
-        JavascriptExecutor js = (JavascriptExecutor) driver;
+//        JavascriptExecutor js = (JavascriptExecutor) driver;
 
         element = driver.findElement(By.cssSelector("#app-root > div > div.wrapper.wrapper--main.d-flex.p-0.pr-md-2_5.pl-md-2_5.mx-auto > div.column.column--left.flex-grow-1 > div:nth-child(2) > div > div"));
 
         Actions action = new Actions(driver);
 
         while (true) {
-            for (int i = 0; i < 25; i++) {
+            for (int i = 0; i < 20; i++) {
                 action.sendKeys(Keys.SPACE).perform(); // 스페이스 키 누르면 브라우저에서는 스크롤이 내려감
                 Thread.sleep(500);
             }
@@ -249,9 +254,43 @@ public class SeleniumScraper {
         Scanner sc = new Scanner(System.in);
 
         System.out.print("비밀번호 입력 : ");
-        String password = sc.nextLine();
 
-        return password;
+        return sc.nextLine();
+    }
+
+    private void saveActivities() {
+        // 객체 형태로 저장
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("activities.dat"))) {
+            for (Activity activity : activities) {
+//                if (activity instanceof ActivityRide) {
+//                    oos.writeObject((ActivityRide) activity);
+//                } else {
+//                    oos.writeObject((ActivityRun) activity);
+//                }
+                oos.writeObject(activity);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("save activities");
+    }
+
+    private void loadActivities() {
+        if (!activities.isEmpty())
+            activities.clear();
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("activities.dat"))) {
+
+            while (true) {
+                activities.add((Activity) ois.readObject());
+            }
+
+        } catch (EOFException e) {
+            System.out.println("load activities");
+        } catch (ClassNotFoundException | IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public Profile getProfile() {
@@ -265,7 +304,17 @@ public class SeleniumScraper {
     public static void main(String[] args) {
         SeleniumScraper scraper = new SeleniumScraper();
 
-        scraper.zwiftScarping();
+//        scraper.zwiftScarping();
+//
+//        scraper.saveActivities();
+
+        scraper.loadActivities();
+
+        ArrayList<Activity> activities = scraper.getActivities();
+        System.out.println(activities.size());
+        for (Activity activity : activities) {
+            System.out.println(activity);
+        }
     }
 
 }
