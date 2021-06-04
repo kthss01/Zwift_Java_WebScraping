@@ -1,12 +1,19 @@
 package com.kay.controller;
 
 import com.kay.model.dao.SeleniumScraper;
+import com.sun.javafx.geom.BaseBounds;
+import com.sun.javafx.geom.transform.BaseTransform;
+import com.sun.javafx.jmx.MXNodeAlgorithm;
+import com.sun.javafx.jmx.MXNodeAlgorithmContext;
+import com.sun.javafx.sg.prism.NGNode;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
@@ -24,7 +31,7 @@ public class MainController implements Initializable {
     public Label rideDistance;
     public ScrollPane scrollPane;
     public Label rideLevel;
-    public Label walkLevel;
+    public Label runLevel;
     public Label rideTime;
     public Label rideCalories;
     public Label rideElevation;
@@ -48,6 +55,8 @@ public class MainController implements Initializable {
     public Label activitiesCount;
     public Label rideCount;
     public Label runCount;
+    public ProgressBar rideExpProgressBar;
+    public ProgressBar runExpProgressBar;
 
     private SeleniumScraper scraper;
 
@@ -56,6 +65,49 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+//        System.out.println("start");
+        initInfo();
+    }
+
+    public void initInfo() {
+        // 초기 정보들 다 기본 상태로 변경
+        // Activity
+        activityImg.setImage(null);
+
+        title.setText("");
+        rideon.setText("0");
+        distance.setText("0 km");
+        time.setText("0h 0m 0s");
+        etcInfo.setText("0 m");
+        calories.setText("0 cal");
+
+        // Profile
+        // ride
+        rideLevel.setText("0");
+        rideExpProgressBar.setProgress(0);
+        rideDistance.setText("0 km");
+        rideTime.setText("0d 0h 0m");
+        rideElevation.setText("0 m");
+        rideCalories.setText("0 cal");
+
+        // run
+        runLevel.setText("0");
+        runExpProgressBar.setProgress(0);
+        runDistance.setText("0 km");
+        runTime.setText("0d 0h 0m");
+        runCalories.setText("0 cal");
+
+        drops.setText("0");
+
+        userImg.setImage(null);
+        startZwift.setText("0.0.0");
+        lastZwift.setText("0.0.0");
+        activitiesCount.setText("0");
+        rideCount.setText("0");
+        runCount.setText("0");
+
+        Node node = scrollPane.getContent();
+        node.setVisible(false);
 
     }
 
