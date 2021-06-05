@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class Run extends Application {
 
@@ -17,7 +18,7 @@ public class Run extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("../view/main.fxml"));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("../view/main.fxml")));
             // test
 //            Parent root = FXMLLoader.load(getClass().getResource("../view/login.fxml"));
             Scene scene = new Scene(root);

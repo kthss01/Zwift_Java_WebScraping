@@ -11,21 +11,6 @@
          <Font name="Tahoma Bold" size="12.0" />
       </font>
    </Button>
-   <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" layoutX="494.0" layoutY="16.0" prefHeight="531.0" prefWidth="269.0" vbarPolicy="ALWAYS">
-      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="36.0" prefWidth="255.0">
-         <ImageView fitHeight="42.0" fitWidth="257.0" pickOnBounds="true">
-            <Image url="@../../../images/bg7.png" />
-         </ImageView>
-         <ImageView fitHeight="30.0" fitWidth="35.0" layoutX="6.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true">
-            <Image url="@../../../images/ride.png" />
-         </ImageView>
-         <Label layoutX="49.0" layoutY="11.0" prefHeight="18.0" prefWidth="211.0" text="Z2 1 Hour">
-            <font>
-               <Font name="Tahoma Bold" size="12.0" />
-            </font>
-         </Label>
-      </AnchorPane>
-   </ScrollPane>
    <Pane layoutX="14.0" layoutY="510.0" prefHeight="284.0" prefWidth="470.0">
       <ImageView fitHeight="284.0" fitWidth="477.0" layoutX="-7.0" layoutY="1.0" pickOnBounds="true">
          <Image url="@../../../images/bg4.png" />
@@ -123,12 +108,12 @@
             <Font name="Tahoma" size="12.0" />
          </font>
       </Label>
-      <Label fx:id="runTime" layoutX="358.0" layoutY="161.0" text="2d 4h 9m">
+      <Label fx:id="runTime" layoutX="359.0" layoutY="161.0" text="2d 4h 9m">
          <font>
             <Font name="Tahoma" size="12.0" />
          </font>
       </Label>
-      <Label fx:id="runCalories" layoutX="360.0" layoutY="191.0" text="17,823cal">
+      <Label fx:id="runCalories" layoutX="358.0" layoutY="191.0" text="17,823cal">
          <font>
             <Font name="Tahoma" size="12.0" />
          </font>
@@ -181,7 +166,7 @@
             <Font name="Tahoma" size="14.0" />
          </font>
       </Label>
-      <Label fx:id="title" layoutX="25.0" layoutY="333.0" prefHeight="36.0" prefWidth="301.0" text="Z2 1 Hour">
+      <Label fx:id="title" layoutX="25.0" layoutY="333.0" prefHeight="36.0" prefWidth="344.0" text="Z2 1 Hour">
          <font>
             <Font name="Tahoma Bold" size="18.0" />
          </font>
@@ -267,7 +252,7 @@
             <Font name="Tahoma" size="12.0" />
          </font>
       </Label>
-      <Label fx:id="lastZwift" layoutX="205.0" layoutY="53.0" text="2021.5.29">
+      <Label fx:id="lastZwift" layoutX="206.0" layoutY="53.0" text="2021.5.29">
          <font>
             <Font name="Tahoma" size="12.0" />
          </font>
@@ -277,7 +262,7 @@
             <Font name="Tahoma" size="12.0" />
          </font>
       </Label>
-      <Label fx:id="activitiesCount" layoutX="222.0" layoutY="78.0" text="300">
+      <Label fx:id="activitiesCount" alignment="CENTER_RIGHT" layoutX="221.0" layoutY="78.0" text="300" textAlignment="RIGHT">
          <font>
             <Font name="Tahoma" size="12.0" />
          </font>
@@ -292,15 +277,16 @@
             <Font name="Tahoma" size="12.0" />
          </font>
       </Label>
-      <Label fx:id="rideCount" layoutX="221.0" layoutY="99.0" text="200">
+      <Label fx:id="rideCount" alignment="CENTER_RIGHT" layoutX="221.0" layoutY="99.0" text="200" textAlignment="RIGHT">
          <font>
             <Font name="Tahoma" size="12.0" />
          </font>
       </Label>
-      <Label fx:id="runCount" layoutX="221.0" layoutY="118.0" text="100">
+      <Label fx:id="runCount" alignment="CENTER_RIGHT" layoutX="221.0" layoutY="118.0" text="64" textAlignment="RIGHT">
          <font>
             <Font name="Tahoma" size="12.0" />
          </font>
       </Label>
    </Pane>
+   <ListView fx:id="listView" layoutX="493.0" layoutY="17.0" onMouseClicked="#listItemClicked" prefHeight="530.0" prefWidth="269.0" />
 </AnchorPane>

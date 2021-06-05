@@ -1,6 +1,8 @@
 package com.kay.model.vo;
 
-public class Profile {
+import java.io.Serializable;
+
+public class Profile implements Serializable {
     private String icon; // icon url
     private String name;
 

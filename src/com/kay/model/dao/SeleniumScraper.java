@@ -9,7 +9,10 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 
 import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -17,6 +20,8 @@ import java.util.concurrent.TimeUnit;
 public class SeleniumScraper {
     private Profile profile;
     private ArrayList<Activity> activities;
+    private int rideCount;
+    private int runCount;
 
     // 드라이버
     private WebDriver driver;
@@ -66,6 +71,8 @@ public class SeleniumScraper {
 
             scrapingActivities();
 
+            saveZwift();
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
@@ -83,13 +90,15 @@ public class SeleniumScraper {
 
         WebElement temp;
 
+        System.out.println("Activity Scraping Start");
+
         for (WebElement ele : elements) {
             temp = ele.findElement(By.cssSelector("div > div.zwift__card__item.zwift__card--top > a > div.activity__stats--card.pos__absolute.d-flex.flex-column.w-100.p-2_5.pb-sm-4.px-sm-3.text-white.text-shadow > ul"));
             String[] stats = temp.getText().split("\n");
             boolean isRide = stats[4].equals("Elevation"); // 3번째 정보로 ride run 구분
 
             temp = ele.findElement(By.cssSelector("div > div.zwift__card__item.zwift__card--top > a"));
-            String url = "https://www.zwift.com/" + temp.getAttribute("href");
+            String url = temp.getAttribute("href");
 
             temp = ele.findElement(By.cssSelector("div > div.zwift__card__item.zwift__card--top > a > div.activity__image.pos__relative.overflow__hidden.scrollable__element--hidden.contain--layout > img"));
             String image = temp.getAttribute("style");
@@ -97,32 +106,32 @@ public class SeleniumScraper {
 //            String image = "";
 
             temp = ele.findElement(By.cssSelector("div > div.zwift__card__item.zwift__card--top > div.activity__card__item.pos__absolute.pos__absolute--top.pos__absolute--left > a > div > div.user__profile__item.d-flex.flex-column.justify-content-center.text-shadow > div.font-weight-bold.font-12.font-lg-14.mt-0_5.mt-sm-1.text-capitalize.opacity-80"));
-            String date = temp.getText();
+            String date = temp.getText().trim();
 
             temp = ele.findElement(By.cssSelector("div > div.zwift__card__item.zwift__card--top > div.activity__card__item.pos__absolute.pos__absolute--top.pos__absolute--right"));
-            String rideon = temp.getText();
+            String rideon = temp.getText().trim();
 
             temp = ele.findElement(By.cssSelector("div > div.zwift__card__item.zwift__card--top > a > div.activity__stats--card.pos__absolute.d-flex.flex-column.w-100.p-2_5.pb-sm-4.px-sm-3.text-white.text-shadow > h4"));
-            String name = temp.getText();
+            String name = temp.getText().trim();
 
             temp = ele.findElement(By.cssSelector("div > div.zwift__card__item.zwift__card--top > a > div.activity__stats--card.pos__absolute.d-flex.flex-column.w-100.p-2_5.pb-sm-4.px-sm-3.text-white.text-shadow > ul > li:nth-child(1) > div.font-14.font-sm-16.font-lg-18.font-weight-black"));
-            String distance = temp.getText();
+            String distance = temp.getText().trim();
 
             temp = ele.findElement(By.cssSelector("div > div.zwift__card__item.zwift__card--top > a > div.activity__stats--card.pos__absolute.d-flex.flex-column.w-100.p-2_5.pb-sm-4.px-sm-3.text-white.text-shadow > ul > li:nth-child(2) > div.font-14.font-sm-16.font-lg-18.font-weight-black > div"));
-            String time = temp.getText().replaceAll("\n", " ");
+            String time = temp.getText().replaceAll("\n", " ").trim();
 
             temp = ele.findElement(By.cssSelector("div > div.zwift__card__item.zwift__card--top > a > div.activity__stats--card.pos__absolute.d-flex.flex-column.w-100.p-2_5.pb-sm-4.px-sm-3.text-white.text-shadow > ul > li:nth-child(3) > div.font-14.font-sm-16.font-lg-18.font-weight-black"));
-            String subStat = temp.getText(); // elevation or pace
+            String subStat = temp.getText().trim(); // elevation or pace
 
             temp = ele.findElement(By.cssSelector("div > div.zwift__card__item.zwift__card--top > a > div.activity__stats--card.pos__absolute.d-flex.flex-column.w-100.p-2_5.pb-sm-4.px-sm-3.text-white.text-shadow > ul > li:nth-child(4) > div.font-14.font-sm-16.font-lg-18.font-weight-black"));
-            String calories = temp.getText();
+            String calories = temp.getText().trim();
 
             if (isRide) {
                 activities.add(new ActivityRide(url, image, date, rideon, name, distance, time, calories, subStat));
             } else {
                 activities.add(new ActivityRun(url, image, date, rideon, name, distance, time, calories, subStat));
             }
-            System.out.println(activities.get(activities.size() - 1));
+//            System.out.println(activities.get(activities.size() - 1));
 
 //            Thread.sleep(1000);
         }
@@ -258,6 +267,24 @@ public class SeleniumScraper {
         return sc.nextLine();
     }
 
+    private void saveProfile() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("profile.dat"))) {
+            oos.writeObject(profile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("save profile");
+    }
+
+    private void loadProfile() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("profile.dat"))) {
+            profile = (Profile) ois.readObject();
+        } catch (ClassNotFoundException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void saveActivities() {
         // 객체 형태로 저장
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("activities.dat"))) {
@@ -293,6 +320,16 @@ public class SeleniumScraper {
         }
     }
 
+    public void saveZwift() {
+        saveProfile();
+        saveActivities();
+    }
+
+    public void loadZwift() {
+        loadProfile();
+        loadActivities();
+    }
+
     public Profile getProfile() {
         return profile;
     }
@@ -301,14 +338,75 @@ public class SeleniumScraper {
         return activities;
     }
 
+    public String getActivitiesCount() {
+        return String.valueOf(activities.size());
+    }
+
+    public String getStartZwift() {
+        return activities.get(activities.size() - 1).getDate();
+    }
+
+    public String getLastZwift() {
+        return activities.get(0).getDate();
+    }
+
+    public String getRideCount() {
+        calcActivityCount();
+        return String.valueOf(rideCount);
+    }
+
+    private void calcActivityCount() {
+        if (rideCount + runCount == activities.size()) {
+            return;
+        }
+
+        for (Activity activity : activities) {
+            if (activity instanceof ActivityRide) {
+                rideCount++;
+            } else {
+                runCount++;
+            }
+        }
+    }
+
+    public String getRunCount() {
+        calcActivityCount();
+        return String.valueOf(runCount);
+    }
+
+    public void changeDateFormat() {
+        // 날짜 원하는 format으로 변경
+
+        SimpleDateFormat dtFormat = new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd");
+
+        for (Activity activity: activities) {
+            String date = activity.getDate();
+            Date formatDate = null;
+            try {
+                formatDate = dtFormat.parse(date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            String newDate = simpleDateFormat.format(formatDate);
+//            System.out.println(date + " : " + newDate);
+
+            activity.setDate(newDate);
+        }
+
+    }
+
     public static void main(String[] args) {
         SeleniumScraper scraper = new SeleniumScraper();
 
 //        scraper.zwiftScarping();
-//
-//        scraper.saveActivities();
 
-        scraper.loadActivities();
+//        scraper.loadProfile();
+//        System.out.println(scraper.getProfile());
+
+        scraper.loadZwift();
+//        scraper.changeDateFormat();
 
         ArrayList<Activity> activities = scraper.getActivities();
         System.out.println(activities.size());
@@ -316,5 +414,4 @@ public class SeleniumScraper {
             System.out.println(activity);
         }
     }
-
 }

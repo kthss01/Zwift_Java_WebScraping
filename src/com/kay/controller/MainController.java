@@ -1,26 +1,33 @@
 package com.kay.controller;
 
 import com.kay.model.dao.SeleniumScraper;
-import com.sun.javafx.geom.BaseBounds;
-import com.sun.javafx.geom.transform.BaseTransform;
-import com.sun.javafx.jmx.MXNodeAlgorithm;
-import com.sun.javafx.jmx.MXNodeAlgorithmContext;
-import com.sun.javafx.sg.prism.NGNode;
+import com.kay.model.vo.Activity;
+import com.kay.model.vo.ActivityRide;
+import com.kay.model.vo.ActivityRun;
+import com.kay.model.vo.Profile;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -29,7 +36,6 @@ public class MainController implements Initializable {
 
 
     public Label rideDistance;
-    public ScrollPane scrollPane;
     public Label rideLevel;
     public Label runLevel;
     public Label rideTime;
@@ -57,6 +63,7 @@ public class MainController implements Initializable {
     public Label runCount;
     public ProgressBar rideExpProgressBar;
     public ProgressBar runExpProgressBar;
+    public ListView<String> listView;
 
     private SeleniumScraper scraper;
 
@@ -100,15 +107,93 @@ public class MainController implements Initializable {
         drops.setText("0");
 
         userImg.setImage(null);
+        name.setText("");
         startZwift.setText("0.0.0");
         lastZwift.setText("0.0.0");
         activitiesCount.setText("0");
         rideCount.setText("0");
         runCount.setText("0");
+    }
 
-        Node node = scrollPane.getContent();
-        node.setVisible(false);
+    private void setActivityList() {
+        for (Activity activity : scraper.getActivities()) {
+            StringBuilder sb = new StringBuilder();
+            if (activity instanceof ActivityRide)
+                sb.append("Ride] ");
+            else
+                sb.append("Run ] ");
 
+            sb.append("[").append(activity.getDate().substring(2))
+                    .append("] ").append(activity.getName());
+
+            listView.getItems().add(sb.toString());
+        }
+    }
+
+    private void setActivity(Activity activity) {
+        // img
+        activityImg.setImage(new Image(activity.getImage()));
+
+        activityImg.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                try {
+                    Desktop.getDesktop().browse(new URI(activity.getUrl()));
+                } catch (IOException | URISyntaxException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        title.setText(activity.getName());
+        rideon.setText(activity.getRideon());
+        date.setText(activity.getDate());
+        distance.setText(activity.getDistance());
+        time.setText(activity.getTime());
+        if (activity instanceof ActivityRide) {
+            etcInfo.setText("Elevation");
+            etcInfoValue.setText(((ActivityRide) activity).getElevation());
+        } else {
+            etcInfo.setText("Pace");
+            etcInfoValue.setText(((ActivityRun) activity).getPace());
+        }
+        calories.setText(activity.getCalories());
+
+        // tooltip
+        title.setTooltip(new Tooltip(activity.getName()));
+    }
+
+    private void setProfile() {
+        Profile profile = scraper.getProfile();
+
+        // ride
+        rideLevel.setText(profile.getRideLevel());
+        rideExpProgressBar.setProgress(Double.parseDouble(profile.getRideLevelExp()) / 100);
+        rideDistance.setText(profile.getRideDistance());
+        rideTime.setText(profile.getRideTime());
+        rideElevation.setText(profile.getRideElevation());
+        rideCalories.setText(profile.getRideCalories());
+
+        // run
+        runLevel.setText(profile.getRunLevel());
+        runExpProgressBar.setProgress(Double.parseDouble(profile.getRunLevelExp()) / 100);
+        runDistance.setText(profile.getRunDistance());
+        runTime.setText(profile.getRunTime());
+        runCalories.setText(profile.getRunCalories());
+
+        drops.setText(profile.getDrops());
+
+        // profile
+
+        // img
+        userImg.setImage(new Image(profile.getIcon()));
+
+        name.setText(profile.getName());
+        startZwift.setText(scraper.getStartZwift());
+        lastZwift.setText(scraper.getLastZwift());
+        activitiesCount.setText(scraper.getActivitiesCount());
+        rideCount.setText(scraper.getRideCount());
+        runCount.setText(scraper.getRunCount());
     }
 
     public void loadBtn(ActionEvent actionEvent) throws IOException {
@@ -129,10 +214,28 @@ public class MainController implements Initializable {
 //        System.out.println(userInfo);
 
         scraper = new SeleniumScraper(userInfo.get("email"), userInfo.get("password"));
-        scraper.zwiftScarping();
+        if (!loginViewController.isReadZwift())
+            scraper.zwiftScarping();
+        else
+            scraper.loadZwift();
 
-        System.out.println("show profile, activities");
-        System.out.println(scraper.getProfile());
-        System.out.println(scraper.getActivities());
+        scraper.changeDateFormat();
+
+//        System.out.println("show profile, activities");
+//        System.out.println(scraper.getProfile());
+//        System.out.println(scraper.getActivities());
+
+        setProfile();
+        setActivityList();
+        setActivity(scraper.getActivities().get(0));
+    }
+
+
+    public void listItemClicked(MouseEvent mouseEvent) {
+        int index = listView.getSelectionModel().getSelectedIndex();
+        if (index <= -1)
+            index = 0;
+        Activity activity = scraper.getActivities().get(index);
+        setActivity(activity);
     }
 }

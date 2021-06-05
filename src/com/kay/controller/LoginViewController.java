@@ -1,5 +1,6 @@
 package com.kay.controller;
 
+import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -13,6 +14,7 @@ public class LoginViewController {
     public PasswordField pwdField;
 
     private Map<String, String> userInfo;
+    private boolean isReadZwift;
 
     public void loginBtn(MouseEvent actionEvent) {
 //        System.out.println("btn clicked");
@@ -29,11 +31,22 @@ public class LoginViewController {
         stage.close();
     }
 
-    public Map<String, String> getUserInfo() {
-        return userInfo;
-    }
-
     public void setUserInfo(Map<String, String> userInfo) {
         this.userInfo = userInfo;
+    }
+
+    public void readZwift(MouseEvent actionEvent) {
+        isReadZwift = true;
+
+        userInfo.put("email", idField.getText());
+        userInfo.put("password", pwdField.getText());
+
+        System.out.println("start read saved zwift");
+
+        closeStage(actionEvent);
+    }
+
+    public boolean isReadZwift() {
+        return isReadZwift;
     }
 }
