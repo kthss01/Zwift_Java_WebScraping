@@ -9,16 +9,16 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -66,6 +66,9 @@ public class MainController implements Initializable {
     public ListView<String> listView;
 
     private SeleniumScraper scraper;
+
+    private Map<String, Image> imageMap = new LinkedHashMap<>();
+    private Map<String, Background> backgroundMap = new LinkedHashMap<>();
 
     // email과 password 저장
     private Map<String, String> userInfo = new LinkedHashMap<>();
@@ -116,17 +119,52 @@ public class MainController implements Initializable {
     }
 
     private void setActivityList() {
+
         for (Activity activity : scraper.getActivities()) {
             StringBuilder sb = new StringBuilder();
-            if (activity instanceof ActivityRide)
-                sb.append("Ride] ");
-            else
-                sb.append("Run ] ");
+//            if (activity instanceof ActivityRide)
+//                sb.append("Ride] ");
+//            else
+//                sb.append("Run ] ");
 
             sb.append("[").append(activity.getDate().substring(2))
                     .append("] ").append(activity.getName());
 
+            if (activity instanceof  ActivityRide) {
+                imageMap.put(sb.toString(), new Image("./images/ride.png", 30, 30, false,true));
+                backgroundMap.put(sb.toString(), new Background(new BackgroundFill(Color.rgb(244,240,230,1), null, null)));
+            } else {
+                imageMap.put(sb.toString(), new Image("./images/run.png", 30, 30, false,true));
+                backgroundMap.put(sb.toString(), new Background(new BackgroundFill(Color.rgb(206,239,228,1), null, null)));
+            }
+
             listView.getItems().add(sb.toString());
+        }
+
+        listView.setCellFactory(param -> new ActivityCell());
+    }
+
+    private class ActivityCell extends ListCell<String> {
+        private ImageView imageView = new ImageView();
+
+        @Override
+        protected void updateItem(String item, boolean empty) {
+            super.updateItem(item, empty);
+
+            if (empty || item == null) {
+                imageView.setImage(null);
+
+                setGraphic(null);
+                setText(null);
+            } else {
+                imageView.setImage(imageMap.get(item));
+
+                setText(item);
+                setGraphic(imageView);
+
+                setBackground(backgroundMap.get(item));
+                setBorder(new Border(new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+            }
         }
     }
 
@@ -134,14 +172,11 @@ public class MainController implements Initializable {
         // img
         activityImg.setImage(new Image(activity.getImage()));
 
-        activityImg.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                try {
-                    Desktop.getDesktop().browse(new URI(activity.getUrl()));
-                } catch (IOException | URISyntaxException e) {
-                    e.printStackTrace();
-                }
+        activityImg.setOnMouseClicked(event -> {
+            try {
+                Desktop.getDesktop().browse(new URI(activity.getUrl()));
+            } catch (IOException | URISyntaxException e) {
+                e.printStackTrace();
             }
         });
 
@@ -200,7 +235,8 @@ public class MainController implements Initializable {
 //        System.out.println("Button clicked");
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../view/login.fxml"));
         Parent parent = fxmlLoader.load();
-        LoginViewController loginViewController = fxmlLoader.<LoginViewController>getController();
+        LoginViewController loginViewController = fxmlLoader.getController();
+
         loginViewController.setUserInfo(userInfo);
 
         Scene scene = new Scene(parent);
